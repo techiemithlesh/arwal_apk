@@ -66,6 +66,7 @@ import CustomerDetails from './src/Module/Customer/Details';
 import WelcomeScreen from './src/Screen/WelcomeScreen';
 import LoginScreen from './src/Screen/LoginScreen';
 import ForgotPassword from './src/Screen/ForgetPassword';
+import ChangePasswordScreen from './src/Screen/ChangePasswordScreen';
 
 // Profile
 import ProfilePage from './src/Screen/ProfilePage';
@@ -211,6 +212,10 @@ const App = () => {
               <Stack.Screen
                 name="AmedmentSummery"
                 component={AmedmentSummery}
+              />
+              <Stack.Screen
+                name="ChangePasswordScreen"
+                component={ChangePasswordScreen}
               />
 
               <Stack.Screen name="ProfilePage" component={ProfilePage} />

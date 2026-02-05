@@ -81,11 +81,65 @@ const Collection = () => {
     { label: 'DD', value: 'DD' },
     { label: 'ONLINE', value: 'ONLINE' },
   ];
+  useEffect(() => {
+    if (user) {
+      // do nothing, wait for Search click
+      console.log('User ready:', user);
+    }
+  }, [user]);
 
+  // const fetchReport = async (pageNo = 1, isLoadMore = false) => {
+  //   try {
+  //     if (!user) return;
+
+  //     setPage(1);
+  //     setData([]); // 🔥 clear old data
+  //     fetchReport(1);
+  //     if (isLoadMore) setLoadingMore(true);
+  //     else setLoading(true);
+
+  //     const token = await getToken();
+  //     const payload = {
+  //       userId: user,
+  //       page: pageNo,
+  //       perPage: 10,
+  //       key: null,
+  //       fromDate: fromDate ? fromDate.toISOString().split('T')[0] : '',
+  //       uptoDate: toDate ? toDate.toISOString().split('T')[0] : '',
+  //       wardId: selectedWard ? Number(selectedWard) : null,
+  //       paymentMode: selectedMode || null,
+  //       appType: null,
+  //     };
+  //     // console.log('Collection Repeor', payload);
+
+  //     const response = await axios.post(
+  //       PROPERTY_REPORTS_API.COLLECTION_REPORT_API,
+  //       payload,
+  //       { headers: { Authorization: `Bearer ${token}` } },
+  //     );
+
+  //     console.log('Collection Report Response:', response.data);
+
+  //     const responseData = response.data.data;
+  //     setLastPage(responseData.lastPage || 1);
+
+  //     if (isLoadMore) {
+  //       setData(prev => [...prev, ...responseData.data]);
+  //     } else {
+  //       setData(responseData.data);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching report:', error);
+  //   } finally {
+  //     setLoading(false);
+  //     setLoadingMore(false);
+  //   }
+  // };
   const fetchReport = async (pageNo = 1, isLoadMore = false) => {
+    if (!user) return;
+
     try {
-      if (isLoadMore) setLoadingMore(true);
-      else setLoading(true);
+      isLoadMore ? setLoadingMore(true) : setLoading(true);
 
       const token = await getToken();
       const payload = {
@@ -93,20 +147,20 @@ const Collection = () => {
         page: pageNo,
         perPage: 10,
         key: null,
-        fromDate: fromDate ? fromDate.toISOString().split('T')[0] : '',
-        uptoDate: toDate ? toDate.toISOString().split('T')[0] : '',
+        fromDate: fromDate.toISOString().split('T')[0],
+        uptoDate: toDate.toISOString().split('T')[0],
         wardId: selectedWard ? Number(selectedWard) : null,
         paymentMode: selectedMode || null,
         appType: null,
       };
+
+      console.log('API PAYLOAD:', payload);
 
       const response = await axios.post(
         PROPERTY_REPORTS_API.COLLECTION_REPORT_API,
         payload,
         { headers: { Authorization: `Bearer ${token}` } },
       );
-
-      console.log('Collection Report Response:', response.data);
 
       const responseData = response.data.data;
       setLastPage(responseData.lastPage || 1);

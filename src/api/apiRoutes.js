@@ -1,4 +1,4 @@
-import { BASE_URL } from "../config";
+import { BASE_URL, WEB_URL } from "../config";
 
 export const API_ROUTES = {
   // trade api routes
@@ -109,6 +109,7 @@ export const usrProfileApi = `${BASE_URL}/api/user-profile`;
 export const heartBeatApi = `${BASE_URL}/api/heartbeat`;
 
 export const Ulb_Api = (id) => `${BASE_URL}/api/ulb/show/${id}`;
-
+export const propertyPaymentWepUrl=(id) => `${WEB_URL}/property/payment-receipt/${id}`;
+export const changePassApi = `${BASE_URL}/api/login-user-change-pass`;
 
   

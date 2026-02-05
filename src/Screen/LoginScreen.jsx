@@ -38,6 +38,7 @@ const LoginScreen = ({ navigation }) => {
   const [selected, setSelected] = useState('email');
   const [showPassword, setShowPassword] = useState(false);
   const [token, setToken] = useState(null);
+  const [loading, setLoading] = useState(false); // Add this at the top
 
   // 1. CONTROL HARDWARE BACK BUTTON
   // useEffect(() => {
@@ -82,7 +83,9 @@ const LoginScreen = ({ navigation }) => {
     fetchTokenAndTest();
   }, []);
 
-  const handleLogin = async () => {
+  const handleLogin1 = async () => {
+    if (loading) return;
+
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
     // Validation logic
@@ -101,6 +104,8 @@ const LoginScreen = ({ navigation }) => {
       return;
     }
 
+    setLoading(true);
+
     const loginPayload =
       selected === 'email'
         ? { email, password, type: 'mobile' }
@@ -112,8 +117,9 @@ const LoginScreen = ({ navigation }) => {
       if (response?.data?.data?.token) {
         const { token, userDetails } = response.data.data;
         const expiryTime = new Date().getTime() + 5 * 60 * 1000;
-
+        // Change this:
         await AsyncStorage.setItem('token', JSON.stringify(token));
+
         await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
         await AsyncStorage.setItem('tokenExpiry', JSON.stringify(expiryTime));
 
@@ -136,7 +142,76 @@ const LoginScreen = ({ navigation }) => {
       );
     }
   };
+  const handleLogin = async () => {
+    if (loading) return;
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    // 1. Pre-validation
+    if (selected === 'email') {
+      if (!email || !emailRegex.test(email)) {
+        showToast('error', 'Please enter a valid email!');
+        return;
+      }
+    } else if (!userName) {
+      showToast('error', 'Please enter your username!');
+      return;
+    }
+
+    if (!password || password.length < 6) {
+      showToast('error', 'Password must be at least 6 characters!');
+      return;
+    }
+
+    setLoading(true); // Start loading
+
+    const loginPayload =
+      selected === 'email'
+        ? { email, password, type: 'mobile' }
+        : { userName, password, type: 'mobile' };
+
+    try {
+      const response = await axios.post(`${BASE_URL}/api/login`, loginPayload);
+
+      if (response?.data?.data?.token) {
+        const { token, userDetails } = response.data.data;
+        const expiryTime = new Date().getTime() + 5 * 60 * 1000;
+
+        await AsyncStorage.setItem('token', JSON.stringify(token));
+        await AsyncStorage.setItem('userDetails', JSON.stringify(userDetails));
+        await AsyncStorage.setItem('tokenExpiry', JSON.stringify(expiryTime));
+
+        showToast('success', 'Login Successfully!');
+
+        navigation.reset({
+          index: 0,
+          routes: [{ name: 'DashBoard' }],
+        });
+      } else {
+        // This handles cases where the server returns 200 but no token
+        showToast('error', 'Invalid email or password. Please try again.');
+      }
+    } catch (error) {
+      // 2. Handle specific error messages from your backend
+      const serverMessage = error.response?.data?.message;
+      const fallbackMessage = 'The email or password you entered is incorrect.';
+
+      // Check if it's a 401 (Unauthorized) or 404 (Not Found)
+      if (error.response?.status === 401 || error.response?.status === 404) {
+        showToast('error', fallbackMessage);
+      } else {
+        showToast(
+          'error',
+          serverMessage || 'Connection error. Please try again.',
+        );
+      }
+
+      console.log('Login Error:', error.response?.data || error.message);
+    } finally {
+      // 3. STOP LOADING: This runs no matter if the try succeeded or the catch failed
+      setLoading(false);
+    }
+  };
   return (
     <ImageBackground
       source={back_11}
@@ -240,8 +315,14 @@ const LoginScreen = ({ navigation }) => {
             </View>
 
             <View style={styles.emailContainer}>
-              <TouchableOpacity style={styles.button} onPress={handleLogin}>
-                <Text style={styles.buttonText}>Login</Text>
+              <TouchableOpacity
+                style={[styles.button, loading && { opacity: 0.7 }]}
+                onPress={handleLogin}
+                disabled={loading}
+              >
+                <Text style={styles.buttonText}>
+                  {loading ? 'Logging in...' : 'Login'}
+                </Text>
               </TouchableOpacity>
             </View>
           </View>

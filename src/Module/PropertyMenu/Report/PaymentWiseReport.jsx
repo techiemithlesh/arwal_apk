@@ -21,7 +21,8 @@ import { PROPERTY_REPORTS_API } from '../../../api/apiRoutes';
 import axios from 'axios';
 import { getToken } from '../../../utils/auth';
 import { useMasterData } from '../../../Context/MasterDataContext';
-import { getUserDetails } from '../../../utils/userDetails';
+// import { getUserDetails } from '../../../utils/userDetails';
+import { getUserDetails } from '../../../utils/auth';
 
 const PaymentWiseReport = () => {
   const [wardOptions, setWardOptions] = useState([]);
@@ -73,8 +74,14 @@ const PaymentWiseReport = () => {
     { label: 'DD', value: 'DD' },
     { label: 'ONLINE', value: 'ONLINE' },
   ];
-
+  useEffect(() => {
+    if (user) {
+      console.log('User ready, fetching initial report:', user);
+      fetchReport();
+    }
+  }, [user]);
   const fetchReport = async () => {
+    if (!user) return;
     try {
       setLoading(true);
       const token = await getToken();
@@ -87,13 +94,13 @@ const PaymentWiseReport = () => {
         paymentMode: selectedMode || null,
         appType: null,
       };
-
+      console.log('payload', payload);
       const response = await axios.post(
         PROPERTY_REPORTS_API.PAYMENT_MODE_WISE_REPORT_API,
         payload,
         { headers: { Authorization: `Bearer ${token}` } },
       );
-
+      console.log('Payment Wise Report', response.data.data);
       setData(response.data?.data || {});
     } catch (error) {
       console.error('Error fetching report:', error);

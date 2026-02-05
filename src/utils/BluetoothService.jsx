@@ -1,9 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import {
-  Alert,
-  PermissionsAndroid,
-  Platform,
-} from 'react-native';
+import { Alert, PermissionsAndroid, Platform } from 'react-native';
 import BluetoothPrinter from '@linvix-sistemas/react-native-bluetooth-printer';
 
 /**
@@ -107,7 +103,7 @@ export const useBluetoothPrinter = () => {
   };
 
   // Scan for Bluetooth devices
-  const scanForDevices = async (onScanComplete) => {
+  const scanForDevices = async onScanComplete => {
     const hasPermission = await requestBluetoothPermission();
     if (!hasPermission) {
       Alert.alert(
@@ -193,13 +189,19 @@ export const useBluetoothPrinter = () => {
       await BluetoothPrinter.printRaw(bytes);
 
       if (options.successMessage !== false) {
-        Alert.alert('Success', options.successMessage || 'Printed successfully!');
+        Alert.alert(
+          'Success',
+          options.successMessage || 'Printed successfully!',
+        );
       }
       return true;
     } catch (error) {
       console.error('Print error:', error);
       if (options.errorMessage !== false) {
-        Alert.alert('Print Failed', options.errorMessage || 'Failed to print. Please try again.');
+        Alert.alert(
+          'Print Failed',
+          options.errorMessage || 'Failed to print. Please try again.',
+        );
       }
       return false;
     } finally {

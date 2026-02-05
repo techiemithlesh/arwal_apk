@@ -13,7 +13,10 @@ import {
   Dimensions,
   Button,
 } from 'react-native';
-import { WORK_FLOW_PERMISSION } from '../../../api/apiRoutes';
+import {
+  propertyPaymentWepUrl,
+  WORK_FLOW_PERMISSION,
+} from '../../../api/apiRoutes';
 import { TCVerificationModal } from '../Saf/Models/TCVerificationModal';
 import PropertyTaxNoticeModal from '../Saf/Models/PropertyTaxNoticeModal';
 import React from 'react';
@@ -212,7 +215,7 @@ const HoldingDetails = ({ route, navigation }) => {
   //     );
   //   }
   // };
-  const handleViewReceipt = async tranDtlId => {
+  const handleViewReceiptOld = async tranDtlId => {
     console.log('trans is', tranDtlId);
     try {
       setLoading(true);
@@ -231,6 +234,21 @@ const HoldingDetails = ({ route, navigation }) => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleViewReceipt111 = (id = '') => {
+    const openBrowerUrl = async url => {
+      const supported = await Linking.canOpenURL(url);
+
+      if (supported) {
+        await Linking.openURL(url);
+      } else {
+        Alert.alert(`Don't know how to open this URL: ${url}`);
+      }
+    };
+    const url = propertyPaymentWepUrl(id);
+    console.log('url is', url);
+    openBrowerUrl(url);
   };
 
   const fetchPermission = async () => {
@@ -775,22 +793,25 @@ const HoldingDetails = ({ route, navigation }) => {
               {safData?.isMobileTower ? 'Yes' : 'No'}
             </Text>
           </View>
+          {safData?.isMobileTower && (
+            <>
+              <View style={styles.row}>
+                <Text style={styles.labelFixed}>
+                  Date of Installation of Mobile Tower:
+                </Text>
+                <Text style={styles.value}>
+                  {safData?.towerInstallationDate || 'NA'}
+                </Text>
+              </View>
 
-          <View style={styles.row}>
-            <Text style={styles.labelFixed}>
-              Date of Installation of Mobile Tower:
-            </Text>
-            <Text style={styles.value}>
-              {safData?.towerInstallationDate || 'NA'}
-            </Text>
-          </View>
-
-          <View style={styles.row}>
-            <Text style={styles.labelFixed}>
-              Total Area Covered by Mobile Tower & its Equipments (Sq. Ft.):
-            </Text>
-            <Text style={styles.value}>{safData?.towerArea || 'NA'}</Text>
-          </View>
+              <View style={styles.row}>
+                <Text style={styles.labelFixed}>
+                  Total Area Covered by Mobile Tower & its Equipments (Sq. Ft.):
+                </Text>
+                <Text style={styles.value}>{safData?.towerArea || 'NA'}</Text>
+              </View>
+            </>
+          )}
 
           <View style={styles.row}>
             <Text style={styles.labelFixed}>
@@ -800,22 +821,27 @@ const HoldingDetails = ({ route, navigation }) => {
               {safData?.isHoardingBoard ? 'Yes' : 'No'}
             </Text>
           </View>
+          {safData?.isHoardingBoard && (
+            <>
+              <View style={styles.row}>
+                <Text style={styles.labelFixed}>
+                  Date of Installation of Hoarding Board(s):
+                </Text>
+                <Text style={styles.value}>
+                  {safData?.hoardingInstallationDate || 'NA'}
+                </Text>
+              </View>
 
-          <View style={styles.row}>
-            <Text style={styles.labelFixed}>
-              Date of Installation of Hoarding Board(s):
-            </Text>
-            <Text style={styles.value}>
-              {safData?.hoardingInstallationDate || 'NA'}
-            </Text>
-          </View>
-
-          <View style={styles.row}>
-            <Text style={styles.labelFixed}>
-              Total Area of Wall / Roof / Land (in Sq. Ft.):
-            </Text>
-            <Text style={styles.value}>{safData?.hoardingArea || 'NA'}</Text>
-          </View>
+              <View style={styles.row}>
+                <Text style={styles.labelFixed}>
+                  Total Area of Wall / Roof / Land (in Sq. Ft.):
+                </Text>
+                <Text style={styles.value}>
+                  {safData?.hoardingArea || 'NA'}
+                </Text>
+              </View>
+            </>
+          )}
 
           <View style={styles.row}>
             <Text style={styles.labelFixed}>Is Property a Petrol Pump?</Text>
@@ -823,22 +849,27 @@ const HoldingDetails = ({ route, navigation }) => {
               {safData?.isPetrolPump ? 'Yes' : 'No'}
             </Text>
           </View>
+          {safData?.isPetrolPump && (
+            <>
+              <View style={styles.row}>
+                <Text style={styles.labelFixed}>
+                  Completion Date of Petrol Pump:
+                </Text>
+                <Text style={styles.value}>
+                  {safData?.petrolPumpCompletionDate || 'NA'}
+                </Text>
+              </View>
 
-          <View style={styles.row}>
-            <Text style={styles.labelFixed}>
-              Completion Date of Petrol Pump:
-            </Text>
-            <Text style={styles.value}>
-              {safData?.petrolPumpCompletionDate || 'NA'}
-            </Text>
-          </View>
-
-          <View style={styles.row}>
-            <Text style={styles.labelFixed}>
-              Underground Storage Area (in Sq. Ft.):
-            </Text>
-            <Text style={styles.value}>{safData?.underGroundArea || 'NA'}</Text>
-          </View>
+              <View style={styles.row}>
+                <Text style={styles.labelFixed}>
+                  Underground Storage Area (in Sq. Ft.):
+                </Text>
+                <Text style={styles.value}>
+                  {safData?.underGroundArea || 'NA'}
+                </Text>
+              </View>
+            </>
+          )}
 
           <View style={styles.row}>
             <Text style={styles.labelFixed}>
@@ -906,7 +937,7 @@ const HoldingDetails = ({ route, navigation }) => {
                     </Text>
 
                     <TouchableOpacity
-                      onPress={() => handleViewReceipt(item.id)}
+                      onPress={() => handleViewReceipt111(item.id)}
                     >
                       <Text style={[styles.tableCell, { color: 'blue' }]}>
                         View

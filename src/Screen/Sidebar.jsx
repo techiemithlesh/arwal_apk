@@ -103,6 +103,15 @@ const Sidebar = ({ children, menuItems, navigation }) => {
             <Icon name="settings" size={22} color="#fff" />
             <Text style={styles.menuText}>Settings</Text>
           </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.menuItem}
+            onPress={() => navigation.navigate('ChangePasswordScreen')}
+          >
+            {/* <Icon name="lock-reset" size={22} color="#fff" />
+             */}
+            <Icon name="vpn-key" size={22} color="#fff" />
+            <Text style={styles.menuText}>Change Password</Text>
+          </TouchableOpacity>
 
           {/* custom children menu (optional) */}
           {children}

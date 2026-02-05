@@ -1,7 +1,8 @@
 import React from 'react';
 import { View, Text, TextInput, StyleSheet } from 'react-native';
 import { Dropdown } from 'react-native-element-dropdown';
-
+import AppTooltip from './AppTooltip';
+import { useState } from 'react';
 // Error Display Component
 const ErrorText = ({ error }) => {
   if (!error) return null;
@@ -32,6 +33,7 @@ const PropertyDetails = ({
   buildArea,
   setBuildArea,
 }) => {
+  const [showPlotTooltip, setShowPlotTooltip] = useState(false);
   return (
     <View style={styles.section}>
       <Text style={styles.label}>Property Details</Text>
@@ -79,6 +81,11 @@ const PropertyDetails = ({
 
       {/* Plot Area */}
       <Text style={styles.label}>Area of Plot (in sqft ) *</Text>
+      <AppTooltip
+        visible={showPlotTooltip}
+        text="Built-up area includes all floors."
+        onClose={() => setShowPlotTooltip(false)}
+      />
       <TextInput
         ref={plotAreaRef}
         style={[styles.input, errors.plotArea && styles.inputError]}
@@ -88,13 +95,16 @@ const PropertyDetails = ({
         onChangeText={setPlotArea}
         keyboardType="numeric"
         editable={isEditable}
+        onFocus={() => setShowPlotTooltip(true)}
+        onBlur={() => setShowPlotTooltip(false)}
       />
+
       {errors.plotArea && (
         <Text style={styles.errorText}>{errors.plotArea}</Text>
       )}
 
       {/* Built-up Area */}
-      <Text style={styles.label}>Built-up Area *</Text>
+      <Text style={styles.label}>Built-up Area (in sqft )*</Text>
       <TextInput
         ref={plotAreaRef}
         style={[styles.input, errors.buildArea && styles.inputError]}
