@@ -71,6 +71,7 @@ import ChangePasswordScreen from './src/Screen/ChangePasswordScreen';
 // Profile
 import ProfilePage from './src/Screen/ProfilePage';
 import Sidebar from './src/Screen/Sidebar';
+import NttDataPayment from './src/Components/NttDataPayment';
 
 const Stack = createNativeStackNavigator();
 
@@ -180,6 +181,7 @@ const App = () => {
               <Stack.Screen name="InboxDtls" component={InboxDtls} />
               <Stack.Screen name="SearchHolding" component={SearchHolding} />
               <Stack.Screen name="HoldingDetails" component={HoldingDetails} />
+              <Stack.Screen options={{headerShown: false}} name="NttDataPayment" component={NttDataPayment} />
               <Stack.Screen
                 name="RessesmentSummry"
                 component={RessesmentSummry}

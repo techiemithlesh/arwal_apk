@@ -205,7 +205,7 @@ const LoginScreen = ({ navigation }) => {
           serverMessage || 'Connection error. Please try again.',
         );
       }
-
+      console.error(error)
       console.log('Login Error:', error.response?.data || error.message);
     } finally {
       // 3. STOP LOADING: This runs no matter if the try succeeded or the catch failed

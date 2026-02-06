@@ -34,6 +34,7 @@ import {
 } from './Model/Model';
 import { getToken } from '../../../utils/auth';
 import { HOLDIGN_API_ROUTES } from '../../../api/apiRoutes';
+import NttDataPaymentModel from './Components/NttDataPaymentModel';
 const HoldingDetails = ({ route, navigation }) => {
   const { id } = route.params;
   console.log(id, 'holdign id');
@@ -88,49 +89,9 @@ const HoldingDetails = ({ route, navigation }) => {
   const [permissionData, setPermissionData] = useState('');
   const [workflowId, setWorkflowId] = useState('');
   const [token, setToken] = useState(null);
+  const [isOnlinePaymentModelOpen,setIsOnlinePaymentModelOpen] = useState(false);
 
   useEffect(() => {
-    const fetchSafDetails = async () => {
-      setLoading(true);
-      try {
-        const token = await getToken();
-
-        const response = await axios.post(
-          HOLDIGN_API_ROUTES.DETAILS_API,
-          { id },
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          },
-        );
-
-        const responseData = response?.data?.data;
-
-        console.log('API Response Data:', responseData);
-
-        // Set both state variables with the same data
-        setHoldingData(responseData);
-        setSafData(responseData);
-
-        setWorkflowId(responseData?.workflowId);
-        setOwnerList(responseData?.owners || []);
-        setFloorData(responseData?.floors || []);
-        setTaxDetails(responseData?.tranDtls || []);
-        setTranDtls(responseData?.tranDtls || []);
-        setMemoDtls(responseData?.memoDtls || []);
-        setTcVerfivication(responseData?.tcVerifications || []);
-      } catch (error) {
-        console.error('fetchSafDetails error:', error);
-        Alert.alert(
-          'Error',
-          'Failed to load property details. Please try again.',
-        );
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (id) {
       fetchSafDetails();
     }
@@ -153,6 +114,46 @@ const HoldingDetails = ({ route, navigation }) => {
     loadToken();
   }, []);
 
+  const fetchSafDetails = async () => {
+    setLoading(true);
+    try {
+      const token = await getToken();
+
+      const response = await axios.post(
+        HOLDIGN_API_ROUTES.DETAILS_API,
+        { id },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+
+      const responseData = response?.data?.data;
+
+      console.log('API Response Data:', responseData);
+
+      // Set both state variables with the same data
+      setHoldingData(responseData);
+      setSafData(responseData);
+
+      setWorkflowId(responseData?.workflowId);
+      setOwnerList(responseData?.owners || []);
+      setFloorData(responseData?.floors || []);
+      setTaxDetails(responseData?.tranDtls || []);
+      setTranDtls(responseData?.tranDtls || []);
+      setMemoDtls(responseData?.memoDtls || []);
+      setTcVerfivication(responseData?.tcVerifications || []);
+    } catch (error) {
+      console.error('fetchSafDetails error:', error);
+      Alert.alert(
+        'Error',
+        'Failed to load property details. Please try again.',
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
   const handleView = id => {
     setIsVisible(true); // if you are opening a modal
     setSelectedData(id); // store it in state to use in modal
@@ -401,6 +402,10 @@ const HoldingDetails = ({ route, navigation }) => {
             <Text style={styles.value}>{safData?.assessmentType}</Text>
           </View>
 
+          <View style={styles.row}>
+            <Text style={styles.labelFixed}>Holding No:</Text>
+            <Text style={styles.value}>{safData?.holdingNo || 'N/A'}</Text>
+          </View>
           <View style={styles.row}>
             <Text style={styles.labelFixed}>New Holding No:</Text>
             <Text style={styles.value}>{safData?.newHoldingNo || 'N/A'}</Text>
@@ -1182,6 +1187,15 @@ const HoldingDetails = ({ route, navigation }) => {
         >
           <Text style={styles.actionBtnText}>Proceed Payment</Text>
         </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={() => {
+            setIsOnlinePaymentModelOpen(true); 
+          }}
+          style={[styles.actionBtn,{backgroundColor: "red"}]}
+        >
+          <Text style={styles.actionBtnText}>Online Payment</Text>
+        </TouchableOpacity>
       </View>
       <PayNowModal
         visible={payNowModalVisible}
@@ -1226,6 +1240,14 @@ const HoldingDetails = ({ route, navigation }) => {
           }
         }}
       />
+      {isOnlinePaymentModelOpen &&(
+        <NttDataPaymentModel
+          id={id}
+          visible={isOnlinePaymentModelOpen}
+          setVisible={(value) => setIsOnlinePaymentModelOpen(value)}
+          onPaymentSuccess={fetchSafDetails}
+        />
+      )}
 
       <ViewDemandModal
         visible={viewDemandVisible}

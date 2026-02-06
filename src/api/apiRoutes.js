@@ -107,6 +107,9 @@ export const swmRate = `${BASE_URL}/api/property/get-swm-rate`
 
 export const usrProfileApi = `${BASE_URL}/api/user-profile`;
 export const heartBeatApi = `${BASE_URL}/api/heartbeat`;
+export const initOnlinePropPaymentApi = `${BASE_URL}/api/property/pay-prop-demand-nttData-init`;
+export const decryptOnlineResponseApi = `${BASE_URL}/api/decrypt/ntt/response`;
+export const testOnlineSignatureApi = `${BASE_URL}/api/test/ntt/signature`;
 
 export const Ulb_Api = (id) => `${BASE_URL}/api/ulb/show/${id}`;
 export const propertyPaymentWepUrl=(id) => `${WEB_URL}/property/payment-receipt/${id}`;
